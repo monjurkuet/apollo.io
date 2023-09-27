@@ -1,11 +1,11 @@
 import requests
-from config import API_KEY
+from config import API_KEY,MONGOURL
 import pandas as pd
 from pymongo import MongoClient
 from datetime import datetime
 import time 
 
-client = MongoClient('mongodb://localhost:27017/')
+client = MongoClient(MONGOURL)
 
 db = client['companydatabase']
 collection = db['apollo_employee_api']
@@ -18,25 +18,24 @@ class ApolloAPIClient:
             'Cache-Control': 'no-cache',
             'Content-Type': 'application/json'
         }
-    def search_organization_domains(self, organization_domain,person_titles=None):
+    def search_organization_domains(self, domain):
         data = {
                 "api_key": self.api_key,
-                "q_organization_domains": organization_domain
+                "domain": domain
             }
-        if person_titles:
-            data['person_titles']=person_titles
         response = requests.post(self.base_url, headers=self.headers, json=data)
         return response
 
 Apolloclient = ApolloAPIClient()
 
 person_titles=['owner','ceo','director']
+person_titles=None
 
 df_ip=pd.read_csv('domains.csv')
 
-for i in range(197,len(df_ip)):
+for i in range(0,len(df_ip)):
     domain=df_ip.loc[i,'Domain']
-    response = Apolloclient.search_organization_domains(domain,person_titles).json()
+    response = Apolloclient.search_organization_domains(domain).json()
     people=response['people']
     df_ip.loc[i,'position']=str(person_titles)
     if not people:
