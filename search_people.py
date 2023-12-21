@@ -15,7 +15,7 @@ import pandas as pd
 PEOPE_SEARCH_API = 'https://app.apollo.io/api/v1/mixed_people/search'
 LOGIN_URL='https://app.apollo.io/#/login'
 PEOPLE_SEARCH_URL='https://app.apollo.io/#/people'
-PERSONA_URL='?qPersonPersonaIds[]=651d5c5c32cfc500a3a07707' #hr,sales,operations
+#PERSONA_URL='?qPersonPersonaIds[]=651d5c5c32cfc500a3a07707' #hr,sales,operations
 PERSONA_URL='?qPersonPersonaIds[]=6502e6fc0f2c8400b659ce4c' # owner level
 EMAIL_FILTER='&contactEmailStatus[]=verified'
 

@@ -16,6 +16,13 @@ COMPANY_DETAILS_API = 'https://app.apollo.io/api/v1/mixed_companies/search'
 LOGIN_URL='https://app.apollo.io/#/login'
 COMPANY_SEARCH_URL='https://app.apollo.io/#/companies'
 
+def parse_domain(url):
+    urlfinal=urlparse(url).netloc.replace("www.", "")
+    if not urlfinal:
+        urlfinal =urlparse(url).path.replace("www.", "")
+    print(urlfinal)
+    return urlfinal.lower()
+
 def login(driver):
     driver.get(LOGIN_URL)
     time.sleep(10)
@@ -30,13 +37,13 @@ def get_domains():
         host=HOST,
         user=USERNAME,
         password=PASSWORD,
-        database='jobboards',
+        database='apollo',
         port=PORT
         )
     # Create a cursor object to execute SQL statements
     cursor = conn.cursor()
     # Execute the SQL query to retrieve distinct values
-    query = "SELECT domain FROM linkedincrawler_company WHERE domain is not NULL"
+    query = "SELECT domain FROM domains_queue WHERE status is NULL"
     cursor.execute(query)
     # Fetch all the distinct values as a list
     domains = [row[0] for row in cursor.fetchall()]
@@ -80,7 +87,8 @@ driver=uc.Chrome()
 login(driver)
 driver.get(COMPANY_SEARCH_URL)
 #remove popup
-driver.execute_script("arguments[0].remove();", driver.find_element(By.XPATH, '//div[@role="dialog"]'))
+if driver.find_elements(By.XPATH, '//div[@role="dialog"]'):
+    driver.execute_script("arguments[0].remove();", driver.find_element(By.XPATH, '//div[@role="dialog"]'))
 
 for domain in tqdm(new_domains):
     driver.find_element(By.XPATH,'//input[@placeholder="Search Companies..."]').clear()

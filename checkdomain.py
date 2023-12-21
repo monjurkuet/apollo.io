@@ -1,8 +1,10 @@
 import requests
 import pandas as pd
+from urllib.parse import urlparse
 
 df_ip=pd.read_csv('domains.csv')
 
+# check domain
 for i in range(len(df_ip)):
     domain=df_ip.loc[i,'Domain']
     print(domain)
@@ -16,5 +18,17 @@ for i in range(len(df_ip)):
         check=0
     df_ip.loc[i,'check']=check
     print(df_ip.loc[i])
+
+# normalise domain
+def parse_domain(url):
+    urlfinal=urlparse(url).netloc.replace("www.", "")
+    if not urlfinal:
+        urlfinal =urlparse(url).path.replace("www.", "")
+    print(urlfinal)
+    return urlfinal.lower()
+
+for i in range(len(df_ip)):
+    domain=df_ip.loc[i,'Domain']
+    df_ip.loc[i,'Domain_clean']=parse_domain(domain)
 
 df_ip.to_csv('domains_op.csv')
